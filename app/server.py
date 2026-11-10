@@ -34,6 +34,12 @@ app.add_middleware(
 FRONTEND_INDEX = Path(__file__).resolve().parent.parent / "frontend" / "index.html"
 
 
+@app.get("/health", tags=["health"], include_in_schema=True)
+def root_health():
+    """Top-level health check probe for Render, Cloud Run, and Kubernetes."""
+    return {"status": "ok", "service": "devpilot"}
+
+
 @app.get("/", include_in_schema=False)
 def serve_index():
     """Serves the DevPilot web dashboard directly at the root URL."""
