@@ -36,4 +36,6 @@ alembic/versions/*.pyc
 # Local Agent Skills & Output
 .agents/
 brag-output*/
+node_modules/
+
 
