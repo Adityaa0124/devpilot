@@ -32,3 +32,8 @@ Thumbs.db
 
 # Alembic env (contains DB URL at runtime)
 alembic/versions/*.pyc
+
+# Local Agent Skills & Output
+.agents/
+brag-output*/
+
