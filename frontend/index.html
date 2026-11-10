@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DevPilot — Autonomous Software Engineering Platform</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <style>
+    :root {
+      --bg-body: #f8fafc;
+      --bg-white: #ffffff;
+      --bg-subtle: #f1f5f9;
+      --bg-muted: #e2e8f0;
+      --border-light: #e2e8f0;
+      --border-card: #cbd5e1;
+      --border-hover: #94a3b8;
+      --text-main: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --primary-black: #0f172a;
+      --tag-bg: #f8fafc;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg-body);
+      color: var(--text-main);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Top Navigation Bar ── */
+    header {
+      padding: 14px 32px;
+      background: var(--bg-white);
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-logo {
+      width: 28px;
+      height: 28px;
+      background: var(--primary-black);
+      color: #ffffff;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .brand-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+      letter-spacing: -0.02em;
+    }
+
+    .brand-tag {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 3px 8px;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-light);
+      border-radius: 4px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .system-status {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+    }
+
+    /* ── Workspace / Conversation Feed ── */
+    .workspace {
+      flex: 1;
+      overflow-y: auto;
+      padding: 36px 24px;
+      scroll-behavior: smooth;
+    }
+
+    .feed {
+      max-width: 860px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    /* ── Welcome Hero ── */
+    .hero {
+      text-align: center;
+      padding: 60px 0 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .hero h1 {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.03em;
+    }
+
+    .hero p {
+      font-size: 15px;
+      color: var(--text-secondary);
+      max-width: 560px;
+      line-height: 1.6;
+    }
+
+    .prompt-suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 16px;
+      max-width: 720px;
+    }
+
+    .suggestion-chip {
+      background: var(--bg-white);
+      border: 1px solid var(--border-light);
+      color: var(--text-secondary);
+      font-size: 13px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+      transition: all 0.15s ease;
+    }
+
+    .suggestion-chip:hover {
+      border-color: var(--border-hover);
+      color: var(--text-main);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+    }
+
+    /* ── User Entry ── */
+    .entry-user {
+      align-self: flex-end;
+      max-width: 78%;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+    }
+
+    .entry-user-bubble {
+      background: var(--bg-white);
+      border: 1px solid var(--border-card);
+      color: var(--text-main);
+      padding: 14px 20px;
+      border-radius: 12px;
+      font-size: 14px;
+      line-height: 1.6;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .entry-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    /* ── Agent Entry ── */
+    .entry-agent {
+      align-self: flex-start;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .agent-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+    }
+
+    .agent-tag {
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      background: var(--bg-white);
+      border: 1px solid var(--border-card);
+      color: var(--text-main);
+    }
+
+    .tag-planner   { border-left: 3px solid #0f172a; }
+    .tag-developer { border-left: 3px solid #059669; }
+    .tag-security  { border-left: 3px solid #dc2626; }
+    .tag-tester    { border-left: 3px solid #0284c7; }
+    .tag-reviewer  { border-left: 3px solid #d97706; }
+
+    .agent-card {
+      background: var(--bg-white);
+      border: 1px solid var(--border-card);
+      border-radius: 10px;
+      padding: 18px 22px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* ── Implementation Plan ── */
+    .plan-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .plan-item {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      font-size: 14px;
+    }
+
+    .plan-index {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-light);
+      padding: 2px 7px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    /* ── Code Display ── */
+    .code-container {
+      margin-top: 12px;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #0f172a;
+    }
+
+    .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 16px;
+      background: #1e293b;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: #cbd5e1;
+    }
+
+    .code-copy-btn {
+      background: #334155;
+      color: #f1f5f9;
+      border: none;
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .code-copy-btn:hover {
+      background: #475569;
+    }
+
+    .code-container pre {
+      margin: 0;
+      padding: 16px;
+      overflow-x: auto;
+      max-height: 400px;
+    }
+
+    .code-container code {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.5;
+      color: #f8fafc;
+    }
+
+    /* ── Terminal Output Box ── */
+    .terminal-box {
+      margin-top: 10px;
+      background: #0f172a;
+      border: 1px solid #1e293b;
+      border-radius: 6px;
+      padding: 12px 16px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: #94a3b8;
+      max-height: 180px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+
+    /* ── Structured Status Badges ── */
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+    }
+
+    .pill-pass {
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      color: #065f46;
+    }
+
+    .pill-warn {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      color: #92400e;
+    }
+
+    .pill-fail {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+    }
+
+    /* ── Security Scan Details ── */
+    .security-findings {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .sec-card {
+      background: #fff1f2;
+      border: 1px solid #fecdd3;
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 13px;
+    }
+
+    .sec-card-header {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 700;
+      color: #9f1239;
+      margin-bottom: 4px;
+    }
+
+    /* ── Analyzing Row ── */
+    .analyzing-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-muted);
+      padding: 4px 0;
+    }
+
+    .spinner {
+      width: 14px;
+      height: 14px;
+      border: 2px solid #cbd5e1;
+      border-top-color: #0f172a;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ── Bottom Input Console ── */
+    .console-dock {
+      background: var(--bg-white);
+      border-top: 1px solid var(--border-light);
+      padding: 18px 32px;
+      flex-shrink: 0;
+    }
+
+    .console-box {
+      max-width: 860px;
+      margin: 0 auto;
+      background: var(--bg-white);
+      border: 1px solid var(--border-card);
+      border-radius: 12px;
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .console-box:focus-within {
+      border-color: #0f172a;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    }
+
+    textarea#taskInput {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-main);
+      font-family: inherit;
+      font-size: 14px;
+      line-height: 1.6;
+      resize: none;
+      max-height: 140px;
+      width: 100%;
+    }
+
+    textarea#taskInput::placeholder {
+      color: var(--text-muted);
+    }
+
+    .console-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid var(--border-light);
+      padding-top: 10px;
+    }
+
+    .console-hint {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    button#submitBtn {
+      background: var(--primary-black);
+      color: #ffffff;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s ease;
+    }
+
+    button#submitBtn:hover:not(:disabled) {
+      opacity: 0.85;
+    }
+
+    button#submitBtn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="brand-logo">D</div>
+    <span class="brand-title">DevPilot</span>
+    <span class="brand-tag">gemini-3.8-flash</span>
+  </div>
+  <div class="system-status">
+    <div class="status-badge">
+      <span class="status-dot"></span>
+      <span>Pipeline Active</span>
+    </div>
+    <span>|</span>
+    <span>PostgreSQL / SQLite</span>
+  </div>
+</header>
+
+<main class="workspace" id="chatArea">
+  <div class="feed" id="messages">
+    <div class="hero" id="heroWelcome">
+      <h1>Software Engineering Assistant</h1>
+      <p>
+        Enter any programming task. DevPilot formulates an implementation plan, generates code, runs AST security audits, executes isolated pytest suites, and reviews functional correctness.
+      </p>
+      <div class="prompt-suggestions">
+        <button class="suggestion-chip" onclick="fillPrompt('Write a thread-safe LRU Cache with TTL eviction in Python')">
+          Thread-safe LRU Cache with TTL
+        </button>
+        <button class="suggestion-chip" onclick="fillPrompt('Implement a streaming CSV chunk parser with schema validation')">
+          Streaming CSV Chunk Parser
+        </button>
+        <button class="suggestion-chip" onclick="fillPrompt('Create a token bucket rate limiter with sliding window metrics')">
+          Token Bucket Rate Limiter
+        </button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="console-dock">
+  <div class="console-box">
+    <textarea id="taskInput" rows="2"
+              placeholder="Describe your engineering requirement (e.g. Build an asynchronous worker queue with retry backoff)..."
+              onkeydown="handleKeydown(event)"></textarea>
+    <div class="console-footer">
+      <span class="console-hint">Press <strong>Enter</strong> to run · <strong>Shift+Enter</strong> for newline</span>
+      <button id="submitBtn" onclick="sendTask()">Generate</button>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const urlParams = new URLSearchParams(window.location.search);
+  const targetPort = urlParams.get('port') || '8001';
+  let API = window.location.protocol.startsWith('http') && window.location.port
+    ? `${window.location.origin}/api/v1`
+    : `http://localhost:${targetPort}/api/v1`;
+
+  let currentTask = '';
+  let activeClarification = null;
+  let analyzingEl = null;
+
+  function esc(str) {
+    return String(str ?? '')
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function scrollToBottom() {
+    const area = document.getElementById('chatArea');
+    area.scrollTop = area.scrollHeight;
+  }
+
+  function setRunning(on) {
+    document.getElementById('taskInput').disabled = on;
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = on;
+    btn.textContent = on ? 'Processing...' : 'Generate';
+  }
+
+  function fillPrompt(text) {
+    const input = document.getElementById('taskInput');
+    input.value = text;
+    input.focus();
+  }
+
+  function showAnalyzing(agentName) {
+    hideAnalyzing();
+    const feed = document.getElementById('messages');
+    analyzingEl = document.createElement('div');
+    analyzingEl.className = 'analyzing-row';
+    analyzingEl.innerHTML = `
+      <div class="spinner"></div>
+      <span>[${agentName.toUpperCase()}] running analysis...</span>
+    `;
+    feed.appendChild(analyzingEl);
+    scrollToBottom();
+  }
+
+  function hideAnalyzing() {
+    if (analyzingEl) { analyzingEl.remove(); analyzingEl = null; }
+  }
+
+  function addUserMessage(text) {
+    const feed = document.getElementById('messages');
+    const el = document.createElement('div');
+    el.className = 'entry-user';
+    el.innerHTML = `
+      <div class="entry-user-bubble">${esc(text)}</div>
+      <span class="entry-meta">User specification</span>
+    `;
+    feed.appendChild(el);
+    scrollToBottom();
+  }
+
+  function addAgentBlock(agentKey, title, contentHtml, round) {
+    hideAnalyzing();
+    const feed = document.getElementById('messages');
+    const el = document.createElement('div');
+    el.className = 'entry-agent';
+    const roundTag = round > 0 ? `· Round ${round + 1}` : '';
+    el.innerHTML = `
+      <div class="agent-header">
+        <span class="agent-tag tag-${agentKey}">${title}</span>
+        <span style="color:var(--text-muted);">${roundTag}</span>
+      </div>
+      <div class="agent-card">
+        ${contentHtml}
+      </div>
+    `;
+    feed.appendChild(el);
+    el.querySelectorAll('pre code').forEach(b => hljs.highlightElement(b));
+    scrollToBottom();
+  }
+
+  // ── Renderers ─────────────────────────────────────────────────────────────
+
+  function renderPlanner(ev) {
+    if (ev.decision === 'needs_clarification') {
+      return `
+        <div class="status-pill pill-warn">CLARIFICATION REQUIRED</div>
+        <p style="margin-top:6px;color:var(--text-main);">${esc(ev.clarification_question)}</p>
+      `;
+    }
+    const items = (ev.plan || []).map((step, idx) => `
+      <li class="plan-item">
+        <span class="plan-index">${String(idx + 1).padStart(2, '0')}</span>
+        <span>${esc(step)}</span>
+      </li>
+    `).join('');
+    return `
+      <div style="font-weight:700;color:var(--text-main);margin-bottom:6px;">Implementation Plan</div>
+      <ul class="plan-list">${items}</ul>
+    `;
+  }
+
+  function renderDeveloper(ev) {
+    const tool = ev.tool || 'run_python_code';
+    let html = `<div style="font-size:12px;color:var(--text-secondary);margin-bottom:8px;font-family:var(--font-mono);">
+      Tool: <code style="color:var(--text-main);background:#f1f5f9;padding:2px 6px;border-radius:4px;">${esc(tool)}</code>
+      ${ev.filename ? ` | Target: <code style="color:var(--text-main);background:#f1f5f9;padding:2px 6px;border-radius:4px;">workspace/${esc(ev.filename)}</code>` : ''}
+    </div>`;
+
+    if (ev.code) {
+      html += `
+        <div class="code-container">
+          <div class="code-header">
+            <span>${ev.filename ? esc(ev.filename) : 'solution.py'}</span>
+            <button class="code-copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-container').querySelector('code').innerText);this.innerText='Copied!';">Copy</button>
+          </div>
+          <pre><code class="language-python">${esc(ev.code)}</code></pre>
+        </div>
+      `;
+    }
+
+    if (ev.execution_result) {
+      html += `
+        <div style="font-size:11px;color:var(--text-muted);margin-top:12px;font-family:var(--font-mono);font-weight:700;">SANDBOX EXECUTION OUTPUT</div>
+        <div class="terminal-box">${esc(ev.execution_result)}</div>
+      `;
+    }
+    return html;
+  }
+
+  function renderSecurity(ev) {
+    const isSecure = ev.is_secure;
+    let badge = isSecure
+      ? `<span class="status-pill pill-pass">PASSED · 0 CRITICAL FINDINGS</span>`
+      : `<span class="status-pill pill-fail">SECURITY WARNING · ${ev.findings_count || 1} FINDINGS</span>`;
+
+    let html = `${badge}<p style="margin-top:4px;">${esc(ev.summary || 'Security review completed.')}</p>`;
+
+    if (ev.findings && ev.findings.length > 0) {
+      html += `<div class="security-findings">`;
+      for (const f of ev.findings) {
+        html += `
+          <div class="sec-card">
+            <div class="sec-card-header">
+              <span>${esc(f.category || 'Vulnerability')}</span>
+              <span>${esc(f.severity || 'HIGH')}</span>
+            </div>
+            <div style="color:var(--text-secondary);margin-bottom:4px;">${esc(f.explanation || '')}</div>
+            ${f.remediation ? `<div style="color:#047857;font-size:12px;font-weight:600;">Remediation: ${esc(f.remediation)}</div>` : ''}
+          </div>
+        `;
+      }
+      html += `</div>`;
+    }
+    return html;
+  }
+
+  function renderTester(ev) {
+    const passed = ev.tests_passed;
+    let badge = passed
+      ? `<span class="status-pill pill-pass">PYTEST SUITE PASSED</span>`
+      : `<span class="status-pill pill-fail">PYTEST SUITE FAILED</span>`;
+
+    let html = `${badge}`;
+    if (ev.test_file) {
+      html += `<span style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);margin-left:8px;">${esc(ev.test_file)}</span>`;
+    }
+    if (ev.test_results) {
+      html += `<div class="terminal-box">${esc(ev.test_results)}</div>`;
+    }
+    return html;
+  }
+
+  function renderReviewer(ev) {
+    if (ev.needs_clarification) {
+      return `
+        <div class="status-pill pill-warn">CLARIFICATION NEEDED</div>
+        <p style="margin-top:6px;color:var(--text-main);">${esc(ev.clarification_question)}</p>
+      `;
+    }
+    const badge = ev.approved
+      ? `<span class="status-pill pill-pass">APPROVED</span>`
+      : `<span class="status-pill pill-fail">REVISION REQUESTED</span>`;
+    return `
+      ${badge}
+      <p style="margin-top:6px;color:var(--text-main);">${esc(ev.feedback || 'Review complete.')}</p>
+    `;
+  }
+
+  // ── Dispatch ──────────────────────────────────────────────────────────────
+
+  function handleEvent(ev) {
+    if (ev.event !== 'agent_done' && ev.event !== 'done' && ev.event !== 'error') return;
+
+    if (ev.event === 'agent_done') {
+      if (ev.agent === 'planner') {
+        addAgentBlock('planner', 'Planner', renderPlanner(ev), 0);
+        if (ev.decision === 'needs_clarification') {
+          activeClarification = { originalTask: currentTask, question: ev.clarification_question, askedBy: 'Planner' };
+          setRunning(false);
+          document.getElementById('taskInput').placeholder = 'Answer clarification question...';
+        } else {
+          showAnalyzing('Developer');
+        }
+
+      } else if (ev.agent === 'developer') {
+        addAgentBlock('developer', 'Developer', renderDeveloper(ev), ev.round ?? 0);
+        showAnalyzing('Security Reviewer');
+
+      } else if (ev.agent === 'security_reviewer') {
+        addAgentBlock('security', 'Security Reviewer', renderSecurity(ev), ev.round ?? 0);
+        showAnalyzing('Test Generator');
+
+      } else if (ev.agent === 'test_generator') {
+        addAgentBlock('tester', 'Test Generator', renderTester(ev), ev.round ?? 0);
+        showAnalyzing('Reviewer');
+
+      } else if (ev.agent === 'reviewer') {
+        addAgentBlock('reviewer', 'Reviewer', renderReviewer(ev), ev.round ?? 0);
+        if (ev.needs_clarification) {
+          activeClarification = { originalTask: currentTask, question: ev.clarification_question, askedBy: 'Reviewer' };
+          setRunning(false);
+          document.getElementById('taskInput').placeholder = 'Answer clarification question...';
+        } else if (!ev.approved) {
+          showAnalyzing('Developer');
+        }
+      }
+      return;
+    }
+
+    hideAnalyzing();
+    setRunning(false);
+    if (ev.event === 'error') {
+      const feed = document.getElementById('messages');
+      const errEl = document.createElement('div');
+      errEl.style.cssText = 'color:#991b1b;font-size:12px;font-family:var(--font-mono);background:#fef2f2;border:1px solid #fecaca;padding:12px 16px;border-radius:6px;';
+      errEl.textContent = `Pipeline Error: ${ev.detail}`;
+      feed.appendChild(errEl);
+      scrollToBottom();
+    }
+  }
+
+  async function sendTask() {
+    const input = document.getElementById('taskInput');
+    const text = input.value.trim();
+    if (!text) return;
+
+    const hero = document.getElementById('heroWelcome');
+    if (hero) hero.remove();
+
+    let taskPayload;
+    if (activeClarification) {
+      taskPayload = `${activeClarification.originalTask}\n\nClarification from User:\n${text}`;
+      activeClarification = null;
+      input.placeholder = 'Describe your engineering requirement...';
+    } else {
+      taskPayload = text;
+      currentTask = taskPayload;
+    }
+
+    input.value = '';
+    addUserMessage(text);
+    setRunning(true);
+    showAnalyzing('Planner');
+
+    try {
+      const res = await fetch(`${API}/run/stream`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ task: taskPayload }),
+      });
+
+      if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop();
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            try { handleEvent(JSON.parse(line.slice(6))); } catch (_) {}
+          }
+        }
+      }
+    } catch (err) {
+      hideAnalyzing();
+      setRunning(false);
+      const feed = document.getElementById('messages');
+      const errEl = document.createElement('div');
+      errEl.style.cssText = 'color:#991b1b;font-size:12px;font-family:var(--font-mono);background:#fef2f2;border:1px solid #fecaca;padding:12px 16px;border-radius:6px;';
+      errEl.textContent = `Connection Error: ${err.message}`;
+      feed.appendChild(errEl);
+      scrollToBottom();
+    }
+  }
+
+  function handleKeydown(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendTask();
+    }
+  }
+</script>
+</body>
+</html>

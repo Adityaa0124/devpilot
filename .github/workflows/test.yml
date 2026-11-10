@@ -1,0 +1,31 @@
+name: Tests
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4.2.2
+
+      - name: Set up Python
+        uses: actions/setup-python@v5.4.0
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run tests
+        env:
+          OPENAI_API_KEY: "fake-key-for-tests"
+          OPENAI_MODEL: "gpt-4o-mini"
+          MAX_CONTEXT_MESSAGES: "6"
+          DATABASE_URL: "postgresql://user:pass@localhost/db"
+        run: pytest tests/ -v

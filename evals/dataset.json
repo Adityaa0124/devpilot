@@ -1,0 +1,33 @@
+[
+  {
+    "id": "task_01_two_sum",
+    "category": "algorithms",
+    "task": "Write a Python function two_sum(nums, target) that returns the indices of the two numbers in nums that add up to target. Must run in O(N) time and handle empty or single-element lists gracefully.",
+    "expected_tool": "run_python_code"
+  },
+  {
+    "id": "task_02_csv_parser",
+    "category": "data_processing",
+    "task": "Write a Python script that parses a CSV string with columns 'name,age,role' and returns a list of dictionaries with age converted to integer. Filter out rows where age is missing or negative.",
+    "expected_tool": "run_python_code"
+  },
+  {
+    "id": "task_03_lru_cache",
+    "category": "data_structures",
+    "task": "Implement an LRUCache class with get(key) and put(key, value) operations running in O(1) average time complexity using collections.OrderedDict. Max capacity should default to 3.",
+    "expected_tool": "run_python_code"
+  },
+  {
+    "id": "task_04_sanitize_url",
+    "category": "security",
+    "task": "Write a defensive URL validation function validate_and_parse_url(url_string) that validates http/https schemes, checks for valid hostnames, and protects against SSRF attempts by disallowing localhost, 127.0.0.1, and 0.0.0.0.",
+    "expected_tool": "run_python_code"
+  },
+  {
+    "id": "task_05_file_exporter",
+    "category": "file_io",
+    "task": "Write a Python script using write_file that creates a configuration file named 'app_config.json' with database settings, port 8080, and debug mode set to false.",
+    "expected_tool": "write_file"
+  }
+]
+
