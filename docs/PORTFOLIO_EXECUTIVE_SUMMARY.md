@@ -93,3 +93,4 @@ Both systems incorporate:
 cd ..\shopkeeper-agent-main
 .\.venv\Scripts\python.exe -m pytest tests/
 ```
+

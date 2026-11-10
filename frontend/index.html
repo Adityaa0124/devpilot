@@ -554,7 +554,7 @@
 <script>
   const urlParams = new URLSearchParams(window.location.search);
   const targetPort = urlParams.get('port') || '8001';
-  let API = window.location.protocol.startsWith('http') && window.location.port
+  let API = window.location.protocol.startsWith('http')
     ? `${window.location.origin}/api/v1`
     : `http://localhost:${targetPort}/api/v1`;
 
